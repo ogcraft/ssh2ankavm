@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn test_inet_regex() {
-        let re = Regex::new(r"^\s*inet\s+(?P<ip>(?:[0-9]{1,3}\.){3}[0-9]{1,3}) netmask.*$").unwrap();
+        let re = Regex::new(r"^\s*inet\s+(?P<ip>(?:[0-9]{1,3}\.){3}[0-9]{1,3}) netmask.*broadcast.*$").unwrap();
         let test_str = "inet 192.168.64.24 netmask 0xffffff00 broadcast 192.168.64.255";
         assert!(re.is_match(test_str));
         let caps = re.captures(test_str).unwrap();
