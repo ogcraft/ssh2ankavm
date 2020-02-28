@@ -1,4 +1,5 @@
 use std::error::Error;
+extern crate regex;
 
 #[derive(Debug)]
 pub struct Config {
@@ -26,6 +27,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 mod tests {
     use super::*;
     use std::process::Command;
+    use regex::Regex;
 
     #[test]
     fn check_config_pass() {
@@ -66,7 +68,7 @@ mod tests {
         assert_eq!(0,0);
     }
     #[test]
-        fn check_parse_ifconfig() {
+    fn check_parse_ifconfig() {
 
         let ifconfig_otput = "lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
         options=1203<RXCSUM,TXCSUM,TXSTATUS,SW_TIMESTAMP>
@@ -101,6 +103,17 @@ mod tests {
         output_lines.iter().for_each(|l| println!("{:?}", l));
 
         assert_eq!(0,0);
+    }
+
+    #[test]
+    fn test_inet_regex() {
+        let re = Regex::new(r"^\s*inet\s+(?P<ip>(?:[0-9]{1,3}\.){3}[0-9]{1,3}) netmask.*$").unwrap();
+        let test_str = "inet 192.168.64.24 netmask 0xffffff00 broadcast 192.168.64.255";
+        assert!(re.is_match(test_str));
+        let caps = re.captures(test_str).unwrap();
+        let ip_addr = caps.name("ip").unwrap().as_str();
+        println!("ip_addr: {:?}", ip_addr);
+        assert_eq!(ip_addr, "192.168.64.24");
     }
 }
     /*
