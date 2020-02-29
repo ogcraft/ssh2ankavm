@@ -1,5 +1,7 @@
 use std::error::Error;
-extern crate regex;
+//extern crate regex;
+use std::process::Command;
+use regex::Regex;
 
 #[derive(Debug)]
 pub struct Config {
@@ -23,6 +25,19 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+pub fn run_ifconfig(vm_name: &str) -> String { 
+    let ifconfig_pfg = "/usr/local/bin/anka"; 
+    let ifconfig_args = ["run", "-n", vm_name, "ifconfig"];
+    let output = Command::new(ifconfig_pfg)
+                     .args(&ifconfig_args)
+                     .output()
+                     .expect("failed to execute ifconfig process");
+        
+    String::from_utf8(output.stdout).unwrap()
+} 
+
+///////////////////////////////////////////////////////////////////////////
+ 
 #[cfg(test)]
 mod tests {
     use super::*;
