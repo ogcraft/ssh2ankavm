@@ -51,8 +51,9 @@ mod tests {
     #[should_panic(expected = "No such file or directory")]
     fn check_run_ifconfig() {
 
+        let ifconfig_pfg = "/usr/local/bin/anka"; 
         let ifconfig_args = ["run", "-n", "catalina_10.15_test", "ifconfig"];
-        let output = Command::new("/usr/local/bin/anka")
+        let output = Command::new(ifconfig_pfg)
                      .args(&ifconfig_args)
                      .output()
                      .expect("failed to execute ifconfig process");
