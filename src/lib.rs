@@ -10,7 +10,7 @@ pub struct Config {
 
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        println!("args: {:?}", args);
+        //println!("args: {:?}", args);
         if args.len() < 2 {
             return Err("not enough arguments");
         }
@@ -21,9 +21,9 @@ impl Config {
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    println!("Config: {:?}", config);
+    //println!("Config: {:?}", config);
     let ifconfig_output = run_ifconfig(&config.vm_name);
-    println!("ifconfig_output:[{:?}]", ifconfig_output);
+    //println!("ifconfig_output:[{:?}]", ifconfig_output);
     let re = Regex::new(r"^\s*inet\s+(?P<ip>(?:[0-9]{1,3}\.){3}[0-9]{1,3}) netmask.*broadcast.*$")
         .unwrap();
     let caps = ifconfig_output
@@ -32,16 +32,25 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         .nth(0)
         .unwrap();
     let ip_addr = caps.name("ip").unwrap().as_str();
-    println!("caps: {:?}", ip_addr);
-    let _output = Command::new("/usr/bin/ssh")
-        .args(&[format!("admin@{}", ip_addr)])
-        .output()
-        .expect("failed to execute ssh process");
+    println!("ssh admin@{}", ip_addr);
+    /*
+        let stdout = Command::new("/usr/bin/ssh")
+            .args(&[format!("admin@{}", ip_addr)])
+            .stdout(Stdio::piped())
+            .spawn()?
+            .stdout
+            .expect("failed to execute ssh process");
+
+        let reader = BufReader::new(stdout);
+
+        reader.lines().for_each(|l| print!("{}\n",l.unwrap()));
+
+        //.for_each( |line| println!("{}", line));
+    */
     Ok(())
 }
 
 pub fn run_ifconfig(vm_name: &str) -> String {
-    println!("run_ifconfig: {:?}", vm_name);
     let ifconfig_pfg = "/usr/local/bin/anka";
     let ifconfig_args = ["run", "-n", vm_name, "ifconfig"];
     let output = Command::new(ifconfig_pfg)
